@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ComunitatES · Gestió Energètica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-logo">⚡</div>
+    <div class="login-title">ComunitatES</div>
+    <div class="login-sub">Gestió de Generació Distribuïda</div>
+    <div class="login-card">
+      <label class="login-lbl" for="l-user">Usuari</label>
+      <input class="login-inp" id="l-user" type="text" placeholder="usuari" autocomplete="username" autocapitalize="none"/>
+      <label class="login-lbl" for="l-pass">Contrasenya</label>
+      <input class="login-inp" id="l-pass" type="password" placeholder="contrasenya" autocomplete="current-password"/>
+      <button class="login-btn" id="l-btn" onclick="doLogin()">
+        <span id="l-txt">Entrar</span>
+        <div class="spin" id="l-spin"></div>
+      </button>
+      <div class="login-err" id="l-err">Usuari o contrasenya incorrectes.</div>
+    </div>
+    <div class="login-foot">Accés restringit · ComunitatES v1.0</div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">⚡</div>
+    <div class="brand-text">
+      <div class="brand-title">ComunitatES</div>
+      <div class="brand-sub">Gestió de Projectes</div>
+    </div>
+  </div>
+  <div class="sidebar-search">
+    <input id="global-search" type="text" placeholder="🔍  Cerca client, CUPS..." oninput="globalSearch(this.value)">
+  </div>
+
+  <div class="sidebar-section-label">Principal</div>
+  <div class="nav-item active" data-view="dashboard" onclick="navigate('dashboard')">
+    <span class="nav-icon">📊</span><span>Dashboard</span>
+  </div>
+  <div class="nav-item" data-view="comunitats" onclick="navigate('comunitats')">
+    <span class="nav-icon">🏘️</span><span>Comunitats</span>
+  </div>
+  <div class="nav-item" data-view="clients" onclick="navigate('clients')">
+    <span class="nav-icon">👥</span><span>Clients</span>
+  </div>
+
+  <div class="sidebar-section-label">Gestió</div>
+  <div class="nav-item" data-view="acords" onclick="navigate('acords')">
+    <span class="nav-icon">📝</span><span>Acords pendents</span>
+    <span class="nav-badge" id="badge-acords">2</span>
+  </div>
+  <div class="nav-item" data-view="errors" onclick="navigate('errors')">
+    <span class="nav-icon">⚠️</span><span>Errors generació</span>
+    <span class="nav-badge" id="badge-errors" style="background:var(--red)">3</span>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="sidebar-footer-btn" onclick="toggleSidebar()">
+      <span style="font-size:1rem">◀</span><span>Reduir menú</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div id="main">
+
+  <!-- TOP BAR -->
+  <div id="topbar">
+    <button class="topbar-toggle" onclick="toggleSidebar()">☰</button>
+    <div class="topbar-breadcrumb" id="breadcrumb">
+      <span class="crumb active">Dashboard</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-tag">3 comunitats</span>
+      <span class="topbar-sync">🟢 Actiu</span>
+      <span style="font-size:0.75rem;color:var(--text-light)">Abril 2025</span>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ══════════════════════════════════════
+         VIEW: DASHBOARD
+    ══════════════════════════════════════ -->
+    <div id="view-dashboard" class="view active anim">
+      <div class="page-header-row">
+        <div class="page-header" style="margin-bottom:0">
+          <h1>Dashboard</h1>
+          <p>Resum global de tots els projectes</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-ghost btn-sm" onclick="refreshData()">🔄 Actualitzar</button>
+          <button class="btn btn-export btn-sm">⬇ Exportar CSV</button>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        ℹ️ <strong>Avís:</strong> Alguns participants pendents d'autoritzar CUPS. Revisa la secció de clients per completar el procés d'alta.
+      </div>
+
+      <!-- GLOBAL KPIs -->
+      <div class="kpi-row">
+        <div class="kpi accent">
+          <div class="kpi-top"><div class="kpi-icon green">🏘️</div></div>
+          <div class="kpi-val">3</div>
+          <div class="kpi-lbl">Comunitats actives</div>
+          <div class="kpi-sub">2 en contractació · 1 operativa</div>
+        </div>
+        <div class="kpi accent">
+          <div class="kpi-top"><div class="kpi-icon green">👥</div></div>
+          <div class="kpi-val">15</div>
+          <div class="kpi-lbl">Total clients</div>
+          <div class="kpi-sub">2 actius · 9 proposats · 4 reserva</div>
+        </div>
+        <div class="kpi accent">
+          <div class="kpi-top"><div class="kpi-icon green">⚡</div></div>
+          <div class="kpi-val">293 kW</div>
+          <div class="kpi-lbl">Potència total</div>
+          <div class="kpi-sub">Suma de totes les instal·lacions</div>
+        </div>
+        <div class="kpi accent-gold">
+          <div class="kpi-top"><div class="kpi-icon gold">💶</div></div>
+          <div class="kpi-val">52.180 €</div>
+          <div class="kpi-lbl">Estalvi brut anual</div>
+          <div class="kpi-sub">Estimació global</div>
+        </div>
+        <div class="kpi accent-blue">
+          <div class="kpi-top"><div class="kpi-icon blue">📋</div></div>
+          <div class="kpi-val">2</div>
+          <div class="kpi-lbl">Acords pendents</div>
+          <div class="kpi-sub">Firmes per completar</div>
+        </div>
+        <div class="kpi accent-red">
+          <div class="kpi-top"><div class="kpi-icon red">⚠️</div></div>
+          <div class="kpi-val">3</div>
+          <div class="kpi-lbl">CUPS sense autoritz.</div>
+          <div class="kpi-sub">Requereix atenció</div>
+        </div>
+      </div>
+
+      <!-- MAP + COMMUNITY CARDS -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🗺️ Localització de les comunitats</span>
+          </div>
+          <div class="card-body" style="padding:0.75rem;">
+            <div class="map-box" id="map-dashboard"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📊 Distribució kW per comunitat</span>
+            </div>
+            <div class="card-body">
+              <div style="position:relative;height:160px;"><canvas id="chart-donut-global"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">💶 Estalvi brut per comunitat (€/any)</span>
+            </div>
+            <div class="card-body">
+              <div style="position:relative;height:140px;"><canvas id="chart-bar-global"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMUNITY CARDS -->
+      <div class="section-lbl">Comunitats gestionades</div>
+      <div class="community-grid" id="dashboard-comm-cards"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: COMUNITATS (llista)
+    ══════════════════════════════════════ -->
+    <div id="view-comunitats" class="view anim">
+      <div class="page-header-row">
+        <div class="page-header" style="margin-bottom:0">
+          <h1>Comunitats</h1>
+          <p>Llista i gestió de tots els projectes</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-export btn-sm">⬇ Exportar CSV</button>
+          <button class="btn btn-primary btn-sm" onclick="openCommModal()">+ Nova comunitat</button>
+        </div>
+      </div>
+      <div class="community-grid" id="comunitats-cards"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: DETALL COMUNITAT
+    ══════════════════════════════════════ -->
+    <div id="view-comunitat-detail" class="view anim">
+      <button class="back-btn" onclick="navigate('comunitats')">← Tornar a comunitats</button>
+      <div id="detail-content"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: CLIENTS (global)
+    ══════════════════════════════════════ -->
+    <div id="view-clients" class="view anim">
+      <div class="page-header-row">
+        <div class="page-header" style="margin-bottom:0">
+          <h1>Clients</h1>
+          <p>Llistat i estat de tots els clients</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <select class="sel" id="filter-comm-clients" onchange="renderClientsTable()">
+            <option value="">Totes les comunitats</option>
+            <option value="C059">La Mossota (C059)</option>
+            <option value="C042">Can Puigdomènech (C042)</option>
+            <option value="C031">Parc Solar Bages (C031)</option>
+          </select>
+          <button class="btn btn-export btn-sm">⬇ Exportar CSV</button>
+        </div>
+      </div>
+
+      <!-- Clients KPIs -->
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);max-width:600px;">
+        <div class="kpi accent">
+          <div class="kpi-val" id="stat-actius">2</div>
+          <div class="kpi-lbl">Clients actius</div>
+        </div>
+        <div class="kpi accent">
+          <div class="kpi-val">3</div>
+          <div class="kpi-lbl">Total comunitats</div>
+        </div>
+        <div class="kpi accent-gold">
+          <div class="kpi-val" id="stat-total-clients">15</div>
+          <div class="kpi-lbl">Clients totals</div>
+          <div class="kpi-sub">Totes les comunitats</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">👥 Clients de la comunitat</span>
+          <div style="display:flex;gap:6px;">
+            <input type="text" class="search-box" placeholder="Cerca client, CUPS o NIF..." id="search-clients" oninput="filterClientsTable()" style="padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-family:Outfit,sans-serif;font-size:0.8rem;min-width:220px;">
+            <button class="btn btn-export btn-sm">⬇ CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="clients-table">
+            <thead>
+              <tr>
+                <th>Codi Client</th>
+                <th>Nom</th>
+                <th>CUPS</th>
+                <th>NIF</th>
+                <th>Telèfon</th>
+                <th>Email</th>
+                <th>Inici Fact.</th>
+                <th>Baixa</th>
+                <th>App</th>
+                <th>Estat</th>
+                <th>Modalitat</th>
+                <th>Perfil</th>
+                <th>Comercialitz.</th>
+                <th>Import</th>
+                <th>Comunitat</th>
+              </tr>
+            </thead>
+            <tbody id="clients-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: ACORDS PENDENTS
+    ══════════════════════════════════════ -->
+    <div id="view-acords" class="view anim">
+      <div class="page-header-row">
+        <div class="page-header" style="margin-bottom:0">
+          <h1>Acords pendents</h1>
+          <p>Seguiment de firmes i descàrrega de documents firmats</p>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-ghost btn-sm">🔄 Recarregar</button>
+          <button class="btn btn-primary btn-sm">✔ Actualitzar</button>
+          <button class="btn btn-danger btn-sm">🗑 Netejar caché</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">🔍 Filtres i accions</span></div>
+        <div class="card-body">
+          <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
+            <div class="kpi"><div class="kpi-val">2</div><div class="kpi-lbl">Total acords</div></div>
+            <div class="kpi accent-gold"><div class="kpi-val">2</div><div class="kpi-lbl">Pendents</div></div>
+            <div class="kpi"><div class="kpi-val">2</div><div class="kpi-lbl">Comunitats</div></div>
+            <div class="kpi"><div class="kpi-val">4</div><div class="kpi-lbl">Firmants</div></div>
+          </div>
+          <input type="text" placeholder="🔍 Cercar per comunitat, document o firmant..." style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:Outfit,sans-serif;font-size:0.83rem;outline:none;margin-top:0.5rem;">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">✍️ Firmes pendents</span>
+          <button class="btn btn-export btn-sm">⬇ Exportar CSV</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Comunitat</th>
+                <th>Document</th>
+                <th>Firmants</th>
+                <th>Firmants pendents</th>
+                <th>Creat</th>
+                <th>Accions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>La Mossota (C059)</strong></td>
+                <td>Acord de repartiment energètic 2025</td>
+                <td>
+                  <div class="sign-status">
+                    <span class="sign-dot done"></span> Energy Marie Curie, SL
+                  </div>
+                  <div class="sign-status" style="margin-top:2px;">
+                    <span class="sign-dot pending"></span> Ajuntament de Sant Sadurní
+                  </div>
+                </td>
+                <td><span class="chip-warn">1 pendent</span></td>
+                <td class="mono">15/03/2025</td>
+                <td>
+                  <div style="display:flex;gap:4px;">
+                    <button class="btn btn-ghost btn-sm">👁 Veure</button>
+                    <button class="btn btn-primary btn-sm">📩 Recordatori</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Can Puigdomènech (C042)</strong></td>
+                <td>Acord de participació — Drets exclusius</td>
+                <td>
+                  <div class="sign-status">
+                    <span class="sign-dot pending"></span> Enerbite SL
+                  </div>
+                  <div class="sign-status" style="margin-top:2px;">
+                    <span class="sign-dot missing"></span> Residents Assoc. Puigdomènech
+                  </div>
+                </td>
+                <td><span class="chip-warn">2 pendents</span></td>
+                <td class="mono">02/04/2025</td>
+                <td>
+                  <div style="display:flex;gap:4px;">
+                    <button class="btn btn-ghost btn-sm">👁 Veure</button>
+                    <button class="btn btn-primary btn-sm">📩 Recordatori</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:0.75rem 1.2rem;font-size:0.75rem;color:var(--text-light);border-top:1px solid var(--border);">
+          Mostrant 2 de 2 resultats
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         VIEW: ERRORS
+    ══════════════════════════════════════ -->
+    <div id="view-errors" class="view anim">
+      <div class="page-header-row">
+        <div class="page-header" style="margin-bottom:0">
+          <h1>Errors de generació</h1>
+          <p>Comunitats amb incidències de producció</p>
+        </div>
+      </div>
+
+      <div class="alert alert-info">ℹ️ <strong>Avís:</strong> Les incidències es calculen diàriament a les 06:00h. Última comprovació: avui 06:00h.</div>
+
+      <div class="grid-2" style="align-items:start;">
+        <!-- RESUM GENERAL -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">📊 Resum general</span></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.7rem;margin-bottom:0.8rem;">
+              <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.85rem;text-align:center;">
+                <div style="font-size:0.68rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Total actives</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500">3</div>
+              </div>
+              <div style="border:1px solid #FEB2B2;border-radius:var(--radius-sm);padding:0.85rem;text-align:center;background:var(--red-bg);">
+                <div style="font-size:0.68rem;color:var(--red);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Amb errors</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--red)">2</div>
+              </div>
+              <div style="border:1px solid var(--g200);border-radius:var(--radius-sm);padding:0.85rem;text-align:center;background:var(--g50);">
+                <div style="font-size:0.68rem;color:var(--g600);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">Sense errors</div>
+                <div style="font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--g600)">1</div>
+              </div>
+            </div>
+            <div style="border:1px solid #FBD38D;border-radius:var(--radius-sm);padding:0.85rem;background:var(--orange-bg);display:inline-block;min-width:140px;">
+              <div style="font-size:0.68rem;color:var(--orange);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:2px;">% amb errors</div>
+              <div style="font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;color:var(--orange)">66,7%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIPUS D'INCIDÈNCIA (selector) -->
+        <div class="card">
+          <div class="card-header"><span class="card-title">🔍 Tipus d'incidència</span></div>
+          <div class="card-body">
+            <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:1rem;">Selecciona un tipus per veure el detall de les comunitats afectades.</p>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;" id="incident-type-list">
+              <div class="incident-type-item active" onclick="selectIncidentType(this,'falta_dades')" style="border:1px solid var(--red);border-radius:var(--radius-sm);padding:0.7rem 1rem;cursor:pointer;background:var(--red-bg);display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-weight:600;font-size:0.85rem;color:var(--red)">Falta dades</div><div style="font-size:0.75rem;color:var(--text-light);margin-top:1px;">CUPS sense registres en els últims N dies</div></div>
+                <span style="background:var(--red);color:#fff;border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700">2</span>
+              </div>
+              <div class="incident-type-item" onclick="selectIncidentType(this,'sense_gen')" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.7rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-weight:600;font-size:0.85rem;">Sense generació</div><div style="font-size:0.75rem;color:var(--text-light);margin-top:1px;">Dades recents però valor de generació = 0</div></div>
+                <span style="background:var(--border);color:var(--text-light);border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700">0</span>
+              </div>
+              <div class="incident-type-item" onclick="selectIncidentType(this,'baixada')" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.7rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-weight:600;font-size:0.85rem;">Baixada considerable</div><div style="font-size:0.75rem;color:var(--text-light);margin-top:1px;">Baixada significativa vs. setmana anterior</div></div>
+                <span style="background:var(--border);color:var(--text-light);border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700">0</span>
+              </div>
+              <div class="incident-type-item" onclick="selectIncidentType(this,'multiple')" style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.7rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-weight:600;font-size:0.85rem;">Múltiple</div><div style="font-size:0.75rem;color:var(--text-light);margin-top:1px;">Comunitats amb múltiples tipus de problemes</div></div>
+                <span style="background:var(--border);color:var(--text-light);border-radius:20px;padding:2px 8px;font-size:0.72rem;font-weight:700">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETALL ERRORS -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">⚠️ Llista d'incidències actives</span>
+          <div style="display:flex;gap:6px;">
+            <select class="sel" style="font-size:0.78rem;">
+              <option>Tots</option><option>Falta dades</option><option>Sense generació</option><option>Baixada considerable</option><option>Múltiple</option>
+            </select>
+            <button class="btn btn-export btn-sm">⬇ Exportar CSV</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Comunitat</th><th>Client</th><th>CUPS</th>
+                <th>Tipus incidència</th><th>Descripció</th>
+                <th>Dies sense dades</th><th>Data detecció</th><th>Estat</th><th>Acció</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong onclick="navigate('comunitat-detail',{id:'C059'})" style="cursor:pointer;color:var(--g600)">La Mossota</strong></td>
+                <td class="td-name" style="max-width:180px;">José Sánchez Salvado<br><span style="font-size:0.7rem;color:var(--text-light)">059001</span></td>
+                <td class="td-cups">ES0031406043983006BG0F</td>
+                <td><span class="chip-warn">CUPS sense auth</span></td>
+                <td style="font-size:0.8rem;max-width:220px;white-space:normal;">CUPS no autoritzat per la distribuidora 031. Manquen 461 dies de vigència.</td>
+                <td class="mono" style="color:var(--red)">461d</td>
+                <td class="mono">12/04/2025</td>
+                <td><span class="chip-pend">Pendent</span></td>
+                <td><button class="btn btn-ghost btn-sm">✉ Contactar</button></td>
+              </tr>
+              <tr>
+                <td><strong onclick="navigate('comunitat-detail',{id:'C059'})" style="cursor:pointer;color:var(--g600)">La Mossota</strong></td>
+                <td class="td-name" style="max-width:180px;">Hijos de Blanco Lavanderia<br><span style="font-size:0.7rem;color:var(--text-light)">059006</span></td>
+                <td class="td-cups">ES0031408569172001SR0F</td>
+                <td><span class="chip-warn">CUPS sense auth</span></td>
+                <td style="font-size:0.8rem;max-width:220px;white-space:normal;">CUPS no autoritzat. Pendent de tramitar autorització a la distribuidora.</td>
+                <td class="mono" style="color:var(--red)">—</td>
+                <td class="mono">12/04/2025</td>
+                <td><span class="chip-pend">Pendent</span></td>
+                <td><button class="btn btn-ghost btn-sm">✉ Contactar</button></td>
+              </tr>
+              <tr>
+                <td><strong onclick="navigate('comunitat-detail',{id:'C042'})" style="cursor:pointer;color:var(--g600)">Can Puigdomènech</strong></td>
+                <td class="td-name" style="max-width:180px;">Residencial Boixeres, S.L.<br><span style="font-size:0.7rem;color:var(--text-light)">042003</span></td>
+                <td class="td-cups">ES0031400012345678CD0F</td>
+                <td><span class="chip-pend">Sense dades Datadis</span></td>
+                <td style="font-size:0.8rem;max-width:220px;white-space:normal;">No s'han rebut dades de consum en els darrers 30 dies. Múltiple incidència activa.</td>
+                <td class="mono" style="color:var(--orange)">30d</td>
+                <td class="mono">10/04/2025</td>
+                <td><span class="chip-pend">Pendent</span></td>
+                <td><button class="btn btn-ghost btn-sm">✉ Contactar</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:0.6rem 1.2rem;font-size:0.75rem;color:var(--text-light);border-top:1px solid var(--border);">
+          3 incidències actives · 2 comunitats afectades
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main --
+
+<!-- ═══════════════════════════════════════════
+     MODAL: NOVA / EDITAR COMUNITAT
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-comm">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-comm-title">+ Nova comunitat</span>
+      <button class="modal-close" onclick="closeModal('modal-comm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-steps">
+        <div class="modal-step active" id="step-lbl-1" onclick="goStep(1)">1 · Dades bàsiques</div>
+        <div class="modal-step" id="step-lbl-2" onclick="goStep(2)">2 · Participants</div>
+      </div>
+
+      <!-- STEP 1: Dades bàsiques -->
+      <div class="modal-step-panel active" id="step-panel-1">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nom de la comunitat *</label>
+            <input class="form-input" id="c-nom" placeholder="Ex: Can Feliu">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ID (auto)</label>
+            <input class="form-input" id="c-id" placeholder="Ex: C078" readonly style="background:var(--bg);color:var(--text-light)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Promotor *</label>
+            <input class="form-input" id="c-promotor" placeholder="Empresa promotora">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Persona de contacte</label>
+            <input class="form-input" id="c-contacte" placeholder="Nom i cognoms">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email contacte</label>
+            <input class="form-input" id="c-email" type="email" placeholder="correu@empresa.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telèfon</label>
+            <input class="form-input" id="c-tel" placeholder="9XXXXXXXX">
+          </div>
+          <div class="form-group fc2">
+            <label class="form-label">Adreça</label>
+            <input class="form-input" id="c-adreca" placeholder="Ex: 08240 – Manresa">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Potència total (kW) *</label>
+            <input class="form-input" id="c-potencia" type="number" min="0" placeholder="Ex: 90">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fi inscripcions</label>
+            <input class="form-input" id="c-fi" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Onboarding</label>
+            <select class="form-select" id="c-onboarding">
+              <option value="Obert">Obert</option>
+              <option value="Tancat">Tancat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Acord de repartiment</label>
+            <select class="form-select" id="c-acord">
+              <option value="Pendent">Pendent</option>
+              <option value="Firmat">Firmat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Informe automàtic</label>
+            <select class="form-select" id="c-informe">
+              <option value="Sense informe auto">Sense informe auto</option>
+              <option value="Mensual">Mensual</option>
+              <option value="Trimestral">Trimestral</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Marca blanca</label>
+            <select class="form-select" id="c-marca">
+              <option value="Sense informe auto">No activada</option>
+              <option value="Activada">Activada</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Latitud (mapa)</label>
+            <input class="form-input" id="c-lat" type="number" step="0.0001" placeholder="Ex: 41.5842">
+            <span class="form-hint">Cerca coordenades a maps.google.com</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Longitud (mapa)</label>
+            <input class="form-input" id="c-lng" type="number" step="0.0001" placeholder="Ex: 2.0134">
+          </div>
+          <div class="form-group fc2">
+            <label class="form-label">Color identificador</label>
+            <div class="color-swatches" id="c-color-swatches">
+              <div class="swatch sel" style="background:#1B4D31" data-color="#1B4D31" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#2B5BA8" data-color="#2B5BA8" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#8B5E00" data-color="#8B5E00" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#7B2D8B" data-color="#7B2D8B" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#C53030" data-color="#C53030" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#2C7A7B" data-color="#2C7A7B" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#744210" data-color="#744210" onclick="pickColor(this)"></div>
+              <div class="swatch" style="background:#1A365D" data-color="#1A365D" onclick="pickColor(this)"></div>
+            </div>
+            <input type="hidden" id="c-color" value="#1B4D31">
+          </div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-light);margin-top:0.75rem;">* Camps obligatoris</div>
+      </div>
+
+      <!-- STEP 2: Participants -->
+      <div class="modal-step-panel" id="step-panel-2">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+          <div>
+            <div style="font-weight:600;font-size:0.88rem;">Afegir participants</div>
+            <div style="font-size:0.75rem;color:var(--text-light);">Pots afegir-ne més tard des del detall de la comunitat</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addClientRow()">+ Afegir fila</button>
+        </div>
+        <div class="client-table-wrap">
+          <div class="client-table-head">
+            <span>Nom / Empresa</span><span>NIF</span><span>CUPS</span>
+            <span>kW</span><span>Email</span><span>Telèfon</span>
+            <span>Estat</span><span></span>
+          </div>
+          <div class="client-table-head"><span>Nom / Empresa</span><span>NIF</span><span>CUPS</span><span>kW</span><span>Email</span><span>Telèfon</span><span>Estat</span><span></span></div>
+          <div id="client-rows-body">
+            <!-- rows added dynamically -->
+          </div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-light);">
+          Si deixes el CUPS buit es marcarà com "Pendent d'autoritzar". Pots editar les dades un cop creada la comunitat.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div style="font-size:0.78rem;color:var(--text-light)" id="modal-comm-err"></div>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-ghost btn-sm" id="btn-prev-step" onclick="goStep(1)" style="display:none">← Anterior</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-comm')">Cancel·lar</button>
+        <button class="btn btn-primary btn-sm" id="btn-next-step" onclick="goStep(2)">Següent →</button>
+        <button class="btn btn-primary btn-sm" id="btn-save-comm" onclick="saveComm()" style="display:none">💾 Guardar comunitat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL: AFEGIR CLIENT (des de detall)
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-client">
+  <div class="modal-box" style="max-width:620px;">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-client-title">+ Nou participant</span>
+      <button class="modal-close" onclick="closeModal('modal-client')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group fc2">
+          <label class="form-label">Nom / Empresa *</label>
+          <input class="form-input" id="cl-nom" placeholder="Nom de la persona o empresa">
+        </div>
+        <div class="form-group">
+          <label class="form-label">NIF / CIF *</label>
+          <input class="form-input" id="cl-nif" placeholder="Ex: B12345678">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CUPS</label>
+          <input class="form-input" id="cl-cups" placeholder="ES003...">
+          <span class="form-hint">Si no el tens, deixa'l en blanc</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="cl-email" type="email" placeholder="correu@empresa.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telèfon</label>
+          <input class="form-input" id="cl-tel" placeholder="9XXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">kW assignats *</label>
+          <input class="form-input" id="cl-kw" type="number" min="0" step="0.5" placeholder="Ex: 15">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estat</label>
+          <select class="form-select" id="cl-estat">
+            <option value="Proposat">Proposat</option>
+            <option value="Reserva">Reserva</option>
+            <option value="Actiu">Actiu</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Modalitat</label>
+          <select class="form-select" id="cl-modalitat">
+            <option value="Ahorra sempre">Ahorra sempre</option>
+            <option value="Drets exclusius">Drets exclusius</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preu llum actual (€/kWh)</label>
+          <input class="form-input" id="cl-preu" type="number" step="0.0001" placeholder="Ex: 0.1450">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Perfil</label>
+          <select class="form-select" id="cl-perfil">
+            <option value="F">F</option>
+            <option value="E">E</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div style="font-size:0.78rem;color:var(--text-light)" id="modal-client-err"></div>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-client')">Cancel·lar</button>
+        <button class="btn btn-primary btn-sm" onclick="saveClient()">💾 Guardar participant</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CONFIRM DELETE DIALOG
+═══════════════════════════════════════════ -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div style="font-size:1.5rem;margin-bottom:0.75rem;">⚠️</div>
+    <div style="font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;" id="confirm-title">Confirmar eliminació</div>
+    <div style="font-size:0.82rem;color:var(--text-mid);margin-bottom:1.25rem;line-height:1.5;" id="confirm-msg">Segur que vols eliminar aquest element? Aquesta acció no es pot desfer.</div>
+    <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+      <button class="btn btn-ghost btn-sm" onclick="closeConfirm()">Cancel·lar</button>
+      <button class="btn btn-sm" id="confirm-ok-btn" style="background:var(--red);color:#fff;border:none;">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+      "role": "admin",
+      "nom": "Administrador"
+    }
+  ],
+  "communities": [
+    {
+      "id": "C059", "nom": "La Mossota",
+      "promotor": "Energy Marie Curie, SL", "contacte": "Energy Marie Curie, SL",
+      "email": "administracio@fagom.net", "telefon": "938792533",
+      "adreca": "08970 – Sant Sadurní d'Anoia", "potencia": "90,0 kW",
+      "onboarding": "Obert", "acord_reparto": "Pendent",
+      "fi_inscripcions": "31/12/2026", "informe_auto": "Sense informe auto",
+      "marca_blanca": "No activada", "lat": 41.4273, "lng": 1.7883, "color": "#1B4D31",
+      "clients_actius": 0, "inscrits": 5, "cups_auth_actius": 0, "cups_auth_proposats": 0,
+      "sense_auth": 2, "datadis_actius": 0, "autoconsumos": "0/5", "clients_app": 0,
+      "sense_dades": 0, "sol_licituds": 8, "total_estalvi": 21150.58, "total_kw": 98, "total_clients": 6
+    },
+    {
+      "id": "C042", "nom": "Can Puigdomènech",
+      "promotor": "Enerbite, SL", "contacte": "Marc Puig Domènech",
+      "email": "info@enerbite.com", "telefon": "936547821",
+      "adreca": "08401 – Granollers", "potencia": "53,0 kW",
+      "onboarding": "Obert", "acord_reparto": "Pendent",
+      "fi_inscripcions": "31/12/2025", "informe_auto": "Mensual",
+      "marca_blanca": "Activada", "lat": 41.6072, "lng": 2.2873, "color": "#2B5BA8",
+      "clients_actius": 1, "inscrits": 4, "cups_auth_actius": 1, "cups_auth_proposats": 2,
+      "sense_auth": 1, "datadis_actius": 2, "autoconsumos": "1/4", "clients_app": 2,
+      "sense_dades": 1, "sol_licituds": 3, "total_estalvi": 18430.0, "total_kw": 53, "total_clients": 4
+    },
+    {
+      "id": "C031", "nom": "Parc Solar Bages",
+      "promotor": "Energy Marie Curie, SL", "contacte": "Anna Soler Ribas",
+      "email": "asoler@fagom.net", "telefon": "938123456",
+      "adreca": "08240 – Manresa", "potencia": "150,0 kW",
+      "onboarding": "Tancat", "acord_reparto": "Firmat",
+      "fi_inscripcions": "30/09/2025", "informe_auto": "Trimestral",
+      "marca_blanca": "Activada", "lat": 41.7284, "lng": 1.8249, "color": "#8B5E00",
+      "clients_actius": 1, "inscrits": 5, "cups_auth_actius": 3, "cups_auth_proposats": 1,
+      "sense_auth": 0, "datadis_actius": 3, "autoconsumos": "1/5", "clients_app": 1,
+      "sense_dades": 2, "sol_licituds": 5, "total_estalvi": 12600.0, "total_kw": 150, "total_clients": 5
+    }
+  ],
+  "clients": [
+    {"codi":"059001","nom":"José Sánchez Salvado","cups":"ES0031406043983006BG0F","nif":"35013320Y","tel":"609808167","email":"josepsanchez@gmail.com","inici_fact":"-","baixa":"-","app":"No","estat":"Reserva","modalitat":"Ahorra sempre","perfil":"E","comercialitz":"1440","import_eur":0,"comunitat":"C059","kw":1,"kwh":1500,"preu_llum":0,"estalvi_brut":0,"cost_fix":156,"preu_kwh":0.104,"pct_estalvi":null,"periode":0,"distribuidora":"031","cups_auth":"Falten","cups_auth_note":"461d","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"059002","nom":"Igmotor96, S.L.","cups":"ES0031405525089001XY0F","nif":"B70981212","tel":"638791208","email":"info@ig-motors.es","inici_fact":"-","baixa":"-","app":"No","estat":"Proposat","modalitat":"Drets exclusius","perfil":"F","comercialitz":"0091","import_eur":432,"comunitat":"C059","kw":3,"kwh":4500,"preu_llum":0.2058,"estalvi_brut":926.1,"cost_fix":432,"preu_kwh":0.096,"pct_estalvi":46.6,"periode":1,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"059003","nom":"Sa, Bo i Natural, S.L.","cups":"ES0031408558284013XY0F","nif":"B01956044","tel":"671637397","email":"ecasanovas@casobi.cat","inici_fact":"-","baixa":"-","app":"No","estat":"Proposat","modalitat":"Drets exclusius","perfil":"F","comercialitz":"0091","import_eur":2508,"comunitat":"C059","kw":19,"kwh":28500,"preu_llum":0.153615,"estalvi_brut":4378.03,"cost_fix":2508,"preu_kwh":0.088,"pct_estalvi":57.3,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"059004","nom":"Gestmusic Endemol, S.A.","cups":"ES0031408200140001ZB0F","nif":"A58141326","tel":"618768626","email":"Gemma.Bonet@gestmusic.es","inici_fact":"-","baixa":"-","app":"No","estat":"Reserva","modalitat":"Ahorra sempre","perfil":"F","comercialitz":"0750","import_eur":0,"comunitat":"C059","kw":25,"kwh":30000,"preu_llum":0.136815,"estalvi_brut":4104.45,"cost_fix":2640,"preu_kwh":0.088,"pct_estalvi":64.3,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"059005","nom":"Moldes Sedro, S.L.","cups":"ES0031405525091001MM0F","nif":"B60954302","tel":"934776228","email":"administracion@moldesedro.com","inici_fact":"-","baixa":"-","app":"No","estat":"Proposat","modalitat":"Drets exclusius","perfil":"F","comercialitz":"1517","import_eur":1980,"comunitat":"C059","kw":15,"kwh":22500,"preu_llum":0.144,"estalvi_brut":3240.0,"cost_fix":1980,"preu_kwh":0.088,"pct_estalvi":61.1,"periode":1,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"059006","nom":"Hijos de Blanco Lavanderia Industrial, S.L.","cups":"ES0031408569172001SR0F","nif":"B66712167","tel":"608739674","email":"robertoblanco@lavanderiablanco.es","inici_fact":"-","baixa":"-","app":"No","estat":"Reserva","modalitat":"Ahorra sempre","perfil":"F","comercialitz":"1749","import_eur":0,"comunitat":"C059","kw":40,"kwh":60000,"preu_llum":0.1417,"estalvi_brut":8502.0,"cost_fix":5280,"preu_kwh":0.088,"pct_estalvi":62.1,"periode":0,"distribuidora":"031","cups_auth":"Falten","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"042001","nom":"Comunitat de Propietaris Can Puig","cups":"ES0031400087623401AB0F","nif":"H08456789","tel":"936548910","email":"admin@canpuig.cat","inici_fact":"01/01/2025","baixa":"-","app":"Sí","estat":"Actiu","modalitat":"Ahorra sempre","perfil":"D","comercialitz":"0091","import_eur":720,"comunitat":"C042","kw":18,"kwh":27000,"preu_llum":0.185,"estalvi_brut":4995.0,"cost_fix":720,"preu_kwh":0.076,"pct_estalvi":58.2,"periode":3,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"Actiu","datadis":"Actiu","dades_recents":"OK","sense_auto":"OK"},
+    {"codi":"042002","nom":"Forn Artesà Granollers, S.C.P.","cups":"ES0031400098765432BC0F","nif":"J08987654","tel":"936612345","email":"info@fornartesa.com","inici_fact":"-","baixa":"-","app":"Sí","estat":"Proposat","modalitat":"Drets exclusius","perfil":"F","comercialitz":"0091","import_eur":960,"comunitat":"C042","kw":12,"kwh":18000,"preu_llum":0.168,"estalvi_brut":3024.0,"cost_fix":960,"preu_kwh":0.08,"pct_estalvi":57.0,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"042003","nom":"Residencial Boixeres, S.L.","cups":"ES0031400012345678CD0F","nif":"B08112233","tel":"937765432","email":"gerencia@boixeres.com","inici_fact":"-","baixa":"-","app":"No","estat":"Proposat","modalitat":"Ahorra sempre","perfil":"E","comercialitz":"1749","import_eur":0,"comunitat":"C042","kw":15,"kwh":22500,"preu_llum":0.155,"estalvi_brut":3487.5,"cost_fix":0,"preu_kwh":0.078,"pct_estalvi":52.4,"periode":0,"distribuidora":"031","cups_auth":"Falten","cups_auth_note":"","autoconsum":"-","datadis":"-","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"042004","nom":"Bar Restaurant El Pati, SCP","cups":"ES0031400099887766EF0F","nif":"J08556677","tel":"936023456","email":"elpati@restaurantelp.cat","inici_fact":"-","baixa":"-","app":"No","estat":"Reserva","modalitat":"Ahorra sempre","perfil":"E","comercialitz":"0750","import_eur":0,"comunitat":"C042","kw":8,"kwh":12000,"preu_llum":0.172,"estalvi_brut":2064.0,"cost_fix":0,"preu_kwh":0.078,"pct_estalvi":50.8,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"031001","nom":"Metall·lúrgia Bages, S.A.","cups":"ES0031500011223344GH0F","nif":"A08334455","tel":"938122334","email":"compres@metalurgiabages.com","inici_fact":"01/03/2025","baixa":"-","app":"No","estat":"Actiu","modalitat":"Drets exclusius","perfil":"F","comercialitz":"0091","import_eur":3600,"comunitat":"C031","kw":60,"kwh":90000,"preu_llum":0.145,"estalvi_brut":13050.0,"cost_fix":3600,"preu_kwh":0.075,"pct_estalvi":68.3,"periode":1,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"Actiu","datadis":"Actiu","dades_recents":"OK","sense_auto":"OK"},
+    {"codi":"031002","nom":"Papelera del Llobregat, S.L.","cups":"ES0031500022334455IJ0F","nif":"B08667788","tel":"938456789","email":"info@paperallobregat.es","inici_fact":"-","baixa":"-","app":"No","estat":"Proposat","modalitat":"Drets exclusius","perfil":"F","comercialitz":"0091","import_eur":2160,"comunitat":"C031","kw":35,"kwh":52500,"preu_llum":0.138,"estalvi_brut":7245.0,"cost_fix":2160,"preu_kwh":0.075,"pct_estalvi":61.4,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"031003","nom":"Coopbages, SCCL","cups":"ES0031500033445566KL0F","nif":"F08901122","tel":"938765432","email":"cooperativa@coopbages.cat","inici_fact":"-","baixa":"-","app":"No","estat":"Proposat","modalitat":"Ahorra sempre","perfil":"F","comercialitz":"1440","import_eur":0,"comunitat":"C031","kw":25,"kwh":37500,"preu_llum":0.141,"estalvi_brut":5287.5,"cost_fix":0,"preu_kwh":0.078,"pct_estalvi":55.9,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"Actiu","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"031004","nom":"Hotel Can Jorba, S.L.","cups":"ES0031500044556677MN0F","nif":"B08223344","tel":"938234567","email":"info@hotelcanjorba.com","inici_fact":"-","baixa":"-","app":"Sí","estat":"Reserva","modalitat":"Ahorra sempre","perfil":"E","comercialitz":"0750","import_eur":0,"comunitat":"C031","kw":20,"kwh":30000,"preu_llum":0.156,"estalvi_brut":4680.0,"cost_fix":0,"preu_kwh":0.078,"pct_estalvi":59.2,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"-","dades_recents":"Sense dades","sense_auto":"OK"},
+    {"codi":"031005","nom":"Ajuntament de Manresa","cups":"ES0031500055667788OP0F","nif":"P0801900A","tel":"938727272","email":"energies@ajmanresa.cat","inici_fact":"-","baixa":"-","app":"No","estat":"Reserva","modalitat":"Ahorra sempre","perfil":"D","comercialitz":"1517","import_eur":0,"comunitat":"C031","kw":10,"kwh":15000,"preu_llum":0.149,"estalvi_brut":2235.0,"cost_fix":0,"preu_kwh":0.078,"pct_estalvi":52.7,"periode":0,"distribuidora":"031","cups_auth":"OK","cups_auth_note":"","autoconsum":"-","datadis":"-","dades_recents":"Sense dades","sense_auto":"OK"}
+  ]
+}
